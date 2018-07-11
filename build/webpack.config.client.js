@@ -8,7 +8,7 @@ module.exports = {
     output: {
         filename: '[name].[hash:8].js',
         path: path.join(__dirname, '../dist'),
-        publicPath: './'
+        publicPath: '/public'
     },
     mode: 'development',
     module: {
@@ -27,6 +27,9 @@ module.exports = {
         ]
     },
     plugins: [
-        new HTMLWebpackPlugin()
+        new HTMLWebpackPlugin({
+            template: path.join(__dirname, '../client/template.html'),
+            filename: 'index.html'
+        })
     ]
 }
