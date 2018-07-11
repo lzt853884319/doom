@@ -1,4 +1,5 @@
 const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -7,7 +8,25 @@ module.exports = {
     output: {
         filename: '[name].[hash:8].js',
         path: path.join(__dirname, '../dist'),
-        publicPath: '/public'
+        publicPath: './'
     },
-    mode: 'development'
+    mode: 'development',
+    module: {
+        rules: [
+            {
+                test: /\.jsx$/,
+                loader: 'babel-loader'
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
+            }
+        ]
+    },
+    plugins: [
+        new HTMLWebpackPlugin()
+    ]
 }
