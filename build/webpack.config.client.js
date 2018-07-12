@@ -5,60 +5,68 @@ const webpack = require('webpack');
 const isDev = process.env.NODE_ENV === 'development';
 
 const config = {
-    entry: {
-        app: path.join(__dirname, '../client/app.js')
-    },
-    output: {
-        filename: '[name].[hash:8].js',
-        path: path.join(__dirname, '../dist'),
-        publicPath: '/public/'
-    },
-    mode: isDev?'development':'production',
-    module: {
-        rules: [
-            {
-                test: /\.jsx$/,
-                loader: 'babel-loader'
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: [
-                    path.join(__dirname, '../node_modules')
-                ]
-            }
+  entry: {
+    app: path.join(__dirname, '../client/app.js')
+  },
+  output: {
+    filename: '[name].[hash:8].js',
+    path: path.join(__dirname, '../dist'),
+    publicPath: '/public/'
+  },
+  mode: isDev ? 'development' : 'production',
+  module: {
+    rules: [
+      {
+        enforce: 'pre',
+        test: /.(js|jsx)$/,
+        loader: 'eslint-loader',
+        exclude: [
+          path.resolve(__dirname, '../node_modules')
         ]
-    },
-    plugins: [
-        new HTMLWebpackPlugin({
-            template: path.join(__dirname, '../client/template.html'),
-            filename: 'index.html'
-        })
+      },
+      {
+        test: /\.jsx$/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: [
+          path.join(__dirname, '../node_modules')
+        ]
+      }
     ]
+  },
+  plugins: [
+    new HTMLWebpackPlugin({
+      template: path.join(__dirname, '../client/template.html'),
+      filename: 'index.html'
+    })
+  ]
 }
 
 if (isDev) {
-    config.entry = {
-        app: [
-            'react-hot-loader/patch',
-            path.join(__dirname, '../client/app.js')
-        ]
+  config.entry = {
+    app: [
+      'react-hot-loader/patch',
+      path.join(__dirname, '../client/app.js')
+    ]
+  }
+  config.devServer = {
+    host: '0.0.0.0',
+    port: 8888,
+    contentBase: path.join(__dirname, '../dist'),
+    hot: true,
+    overlay: {
+      errors: true
+    },
+    compress: true,
+    publicPath: '/public',
+    historyApiFallback: {
+      index: '/public/index.html'
     }
-    config.devServer = {
-        host: '0.0.0.0',
-        port: 8888,
-        contentBase: path.join(__dirname, '../dist'),
-        hot: true,
-        overlay: {
-            errors: true
-        },
-        compress: true,
-        publicPath: '/public',
-        historyApiFallback: {
-            index: '/public/index.html'
-        }
-    }
-    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+  }
+  config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
 module.exports = config;
